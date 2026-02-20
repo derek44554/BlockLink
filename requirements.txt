@@ -1,0 +1,14 @@
+setuptools
+cryptography
+pyyaml
+starlette
+websockets
+uvicorn
+sqlmodel
+python-dotenv
+
+fastapi
+requests
+netifaces
+pycryptodome
+Pillow

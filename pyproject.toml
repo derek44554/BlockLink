@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "blocklink"
+dynamic = ["version"]
+description = "A distributed node network framework for secure registration and instruction transmission"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "Derek X", email = "me@derekx.com"}
+]
+keywords = ["distributed", "networking", "protocol", "blockchain", "node"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Networking",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+]
+
+dependencies = [
+    "cryptography>=41.0.0",
+    "pyyaml>=6.0",
+    "starlette>=0.27.0",
+    "websockets>=11.0",
+    "uvicorn>=0.23.0",
+    "sqlmodel>=0.0.8",
+    "python-dotenv>=1.0.0",
+    "fastapi>=0.100.0",
+    "requests>=2.31.0",
+    "netifaces>=0.11.0",
+    "pycryptodome>=3.18.0",
+    "Pillow>=10.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/derek44554/BlockLink"
+"Bug Reports" = "https://github.com/derek44554/BlockLink/issues"
+"Source" = "https://github.com/derek44554/BlockLink"
+
+[tool.setuptools.dynamic]
+version = {attr = "blocklink.__version__"}
