@@ -79,5 +79,3 @@ class ResFutures(metaclass=SingletonMeta):
         # --------------------- 清理内存
         del self.file_data[ins_cert.res]
 
-
-RES_FUTURES = ResFutures()

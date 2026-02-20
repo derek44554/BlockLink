@@ -21,4 +21,3 @@ class NodeMeta(metaclass=SingletonMeta):
         return self.node.get(name, None)
 
 
-NODE_MEAT = NodeMeta()

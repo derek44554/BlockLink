@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from starlette.websockets import WebSocket, WebSocketDisconnect
 
-from blocklink.models.node.node_manager import NODE_MANAGER
+from blocklink.models.node.node_manager import NodeManager
 from blocklink.utils.ins_except import InsException
 from blocklink.utils.node_message import node_message
 
@@ -19,4 +19,4 @@ async def websocket_endpoint(websocket: WebSocket):
             ...
     except WebSocketDisconnect:
         """断开连接"""
-        NODE_MANAGER.disconnect(websocket)
+        NodeManager().disconnect(websocket)

@@ -3,7 +3,7 @@ import os
 
 from blocklink.models.node.node import NodeModel
 from blocklink.models.signature.signature import SignatureModel
-from blocklink.utils.node_meta import NODE_MEAT
+from blocklink.utils.node_meta import NodeMeta
 from blocklink.utils.singleton_meta import SingletonMeta
 
 """
@@ -22,9 +22,9 @@ class NodeManager(metaclass=SingletonMeta):
 
     def start(self):
         """将本节点加入其中"""
-        signature_model = SignatureModel(NODE_MEAT.signature, **NODE_MEAT.signature)
-        node_model = NodeModel(bid=NODE_MEAT["bid"], websocket=None, signature_model=signature_model, encryption_key=os.urandom(32))
-        self.active_node[NODE_MEAT["bid"]] = node_model
+        signature_model = SignatureModel(NodeMeta().signature, **NodeMeta().signature)
+        node_model = NodeModel(bid=NodeMeta()["bid"], websocket=None, signature_model=signature_model, encryption_key=os.urandom(32))
+        self.active_node[NodeMeta()["bid"]] = node_model
 
     def active(self, node_model: NodeModel):
         """
@@ -95,9 +95,6 @@ class NodeManager(metaclass=SingletonMeta):
                     return v
         else:
             # 已正常的节点完全匹配bid
-            return NODE_MANAGER.active_node.get(bid)
+            return NodeManager().active_node.get(bid)
 
         return None
-
-
-NODE_MANAGER = NodeManager()

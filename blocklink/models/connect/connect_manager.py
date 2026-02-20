@@ -46,5 +46,3 @@ class ConnectManager(metaclass=SingletonMeta):
         self.connects[connect_model.bid] = connect_model
         await connect_model.connect()
 
-
-CONNECT_MANAGER = ConnectManager()

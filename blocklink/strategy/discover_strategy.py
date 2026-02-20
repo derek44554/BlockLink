@@ -3,15 +3,15 @@ import asyncio
 from websockets import ClientConnection
 
 from blocklink.models.connect.connect import ConnectModel
-from blocklink.models.connect.connect_manager import CONNECT_MANAGER
-from blocklink.models.node.node_manager import NODE_MANAGER
+from blocklink.models.connect.connect_manager import ConnectManager
+from blocklink.models.node.node_manager import NodeManager
 from blocklink.models.signature.signature import SignatureModel
 from blocklink.strategy.strategy import Strategy
 
 import requests
 
 from blocklink.utils.discover import get_192_subnet_hosts, check_port_open, get_gateway_mac
-from blocklink.utils.node_meta import NODE_MEAT
+from blocklink.utils.node_meta import NodeMeta
 
 """
 發現策略
@@ -61,11 +61,11 @@ class DiscoverStrategy(Strategy):
                 signature_model = SignatureModel(data=response_json, **response_json)
 
                 # 簽名驗證失敗或是自己，直接跳過
-                if (not signature_model.is_verify) or signature_model.owner == NODE_MEAT["bid"]:
+                if (not signature_model.is_verify) or signature_model.owner == NodeMeta()["bid"]:
                     continue
 
                 # 取得既有連線（如果有）
-                connect_model = CONNECT_MANAGER[signature_model.owner]
+                connect_model = ConnectManager()[signature_model.owner]
 
                 if connect_model is None:
                     # 尚未建立連線 → 創建並保存
@@ -77,7 +77,7 @@ class DiscoverStrategy(Strategy):
                     connect_model = ConnectModel(data=data)
                     connect_model.save()
                     # 新增到管理器並嘗試連線
-                    await CONNECT_MANAGER.add_connect(connect_model=connect_model)
+                    await ConnectManager().add_connect(connect_model=connect_model)
                 else:
                     # 連線已存在 → 判斷資訊是否需要更新
                     if connect_model.private_address != f"{host}:{port}" or connect_model.mac != mac:
@@ -89,7 +89,7 @@ class DiscoverStrategy(Strategy):
 
                 # 5. 如 MAC 變化且現有連線為我們主動連線，則強制斷線等待重連
                 if is_mac_change:
-                    node_model = NODE_MANAGER.get_node(connect_model.bid)
+                    node_model = NodeManager().get_node(connect_model.bid)
                     if node_model and isinstance(node_model.websocket, ClientConnection):
                         await node_model.websocket.close()
 

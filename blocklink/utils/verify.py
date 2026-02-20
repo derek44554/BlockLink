@@ -4,7 +4,7 @@ from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.exceptions import InvalidSignature
 
-from blocklink.utils.node_meta import NODE_MEAT
+from blocklink.utils.node_meta import NodeMeta
 
 
 def signature_verify(signature_base64, data) -> bool:
@@ -19,7 +19,7 @@ def signature_verify(signature_base64, data) -> bool:
 
     # 验证签名
     try:
-        NODE_MEAT.top_verify_public_pey.verify(
+        NodeMeta().top_verify_public_pey.verify(
             signature,
             data,
             padding.PSS(

@@ -40,5 +40,3 @@ class InsRecord(metaclass=SingletonMeta):
 
         return True
 
-
-INS_RECORD = InsRecord()

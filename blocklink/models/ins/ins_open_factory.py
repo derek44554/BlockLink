@@ -3,14 +3,14 @@ import json
 
 from blocklink.models.ins.factory import InsFactory
 from blocklink.models.ins.ins_open import InsOpen
-from blocklink.utils.node_meta import NODE_MEAT
+from blocklink.utils.node_meta import NodeMeta
 from blocklink.utils.tools import generate_bid, extract_by_space
 
 
 class InsOpenFactory(InsFactory):
     def create(self, receiver, routing, data, status_code=None, res=None):
         bid = generate_bid()
-        sender = NODE_MEAT["bid"]
+        sender = NodeMeta()["bid"]
         return InsOpen(bid=bid, sender=sender, receiver=receiver, routing=routing, data=data, status_code=status_code,
                        res=res)
 
@@ -22,7 +22,7 @@ class InsOpenFactory(InsFactory):
         bid = extract_by_space(text=text, position=1)
         sender = extract_by_space(text=text, position=2)
         receiver = extract_by_space(text=text, position=3)
-        if receiver != NODE_MEAT["bid"] and receiver != NODE_MEAT["bid"][:10] and receiver != "":
+        if receiver != NodeMeta()["bid"] and receiver != NodeMeta()["bid"][:10] and receiver != "":
             print("Open ins Text转模型 失败")
             return None
         routing = extract_by_space(text=text, position=5)

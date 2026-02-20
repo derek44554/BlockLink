@@ -1,10 +1,10 @@
+from blocklink.utils.res_futures import ResFutures
+
 from blocklink.models.node.node import NodeModel
 from blocklink.models.routers.route_block import RouteBlock
-from blocklink.utils.res_futures import RES_FUTURES
 from starlette.websockets import WebSocket
 from blocklink.models.ins.ins_cert import InsCert
 from blocklink.models.ins.ins_open import InsOpen
-
 
 res_route = RouteBlock(route="/res")
 
@@ -17,7 +17,7 @@ async def open_res_data(websocket: WebSocket, ins_open: InsOpen):
     :param ins_open:
     :return:
     """
-    RES_FUTURES.res_ins(ins_open)
+    ResFutures().res_ins(ins_open)
 
 @res_route.cert("/data")
 async def cert_res_data(node_model: NodeModel, ins_cert: InsCert):
@@ -27,7 +27,7 @@ async def cert_res_data(node_model: NodeModel, ins_cert: InsCert):
     :param ins_cert:
     :return:
     """
-    RES_FUTURES.res_ins(ins_cert)
+    ResFutures().res_ins(ins_cert)
 
 
 @res_route.cert("/file")
@@ -38,5 +38,5 @@ async def res_file(node_model: NodeModel, ins_cert: InsCert):
     :param ins_cert:
     :return:
     """
-    RES_FUTURES.res_file(ins_cert)
+    ResFutures().res_file(ins_cert)
 

@@ -1,6 +1,6 @@
 from blocklink.models.ins.simple_int_factory import SimpleIntFactory
 from blocklink.models.routers.route_block_manage import ROUTE_BLOCK_MANAGE
-from blocklink.utils.node_meta import NODE_MEAT
+from blocklink.utils.node_meta import NodeMeta
 from fastapi import WebSocket, WebSocketDisconnect
 from blocklink.utils.node_forwarder import forward_to_node
 from blocklink.utils.node_send import node_send_v2
@@ -21,7 +21,7 @@ async def process_msg(websocket, data):
     receiver  = extract_by_space(text=data, position=3)
 
     # 是否 不在本节点处理
-    if receiver != NODE_MEAT["bid"] and receiver != NODE_MEAT["bid"][:10] and receiver != "":
+    if receiver != NodeMeta()["bid"] and receiver != NodeMeta()["bid"][:10] and receiver != "":
         await node_send_v2(receiver=receiver, data=data)
         return
 

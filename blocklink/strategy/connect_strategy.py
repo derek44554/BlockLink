@@ -1,4 +1,4 @@
-from blocklink.models.connect.connect_manager import CONNECT_MANAGER
+from blocklink.models.connect.connect_manager import ConnectManager
 from blocklink.strategy.strategy import Strategy
 
 """
@@ -14,4 +14,4 @@ class ConnectStrategy(Strategy):
 
     async def run(self):
         # 节点连接
-        await CONNECT_MANAGER.connect()
+        await ConnectManager().connect()

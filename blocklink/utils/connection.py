@@ -3,7 +3,7 @@ from blocklink.models.ins.ins_open_factory import InsOpenFactory
 from blocklink.models.node.node import NodeModel
 from blocklink.models.node.node_manager import NodeManager
 from blocklink.models.signature.signature import SignatureModel
-from blocklink.utils.node_meta import NODE_MEAT
+from blocklink.utils.node_meta import NodeMeta
 from blocklink.utils.cryptography import load_pem_to_public_key, encrypt_with_public_key_base64, decrypt_with_private_key_base64, \
     decrypt_with_symmetric_key_base64, encrypt_with_symmetric_key_base64
 from blocklink.utils.tools import save_to_yaml
@@ -36,12 +36,12 @@ async def connection_node(websocket):
 
     # 使用对方公钥加密
     challenge_ciphertext_base64 = encrypt_with_public_key_base64(public_key=signature_model.public_key,
-                                                                 data_bytes=challenge_original + NODE_MEAT["bid"].encode(
+                                                                 data_bytes=challenge_original + NodeMeta()["bid"].encode(
                                                                      encoding='utf-8'))
 
     challenge_data = {
         "challenge": challenge_ciphertext_base64,  # 随机挑战
-        "signature": NODE_MEAT.signature,  # 签名
+        "signature": NodeMeta().signature,  # 签名
 
     }
 
@@ -56,7 +56,7 @@ async def connection_node(websocket):
     challenge_and_key_response = await websocket.recv()  # 接收服务器返回的消息
     challenge_and_key_ins_model = ins_open_factory.fro_text(challenge_and_key_response)
 
-    challenge_and_key = decrypt_with_private_key_base64(private_key=NODE_MEAT.node_private_pey,
+    challenge_and_key = decrypt_with_private_key_base64(private_key=NodeMeta().node_private_pey,
                                                         encrypted_base64=challenge_and_key_ins_model.data["v"])
     challenge = challenge_and_key[:32]  # 随机挑战
     encryption_key = challenge_and_key[32:]  # 对称加密Key

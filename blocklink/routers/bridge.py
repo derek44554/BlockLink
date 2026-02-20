@@ -6,7 +6,7 @@ import binascii
 from fastapi import APIRouter, Body, HTTPException, Request
 
 from blocklink.models.ins.ins_open_factory import InsOpenFactory
-from blocklink.models.ins.ins_cert_factory import INS_CERT_FACTORY
+from blocklink.models.ins.ins_cert_factory import InsCertFactory
 from blocklink.utils.model.bridge_res import BridgeRes
 from fastapi.encoders import jsonable_encoder
 
@@ -81,7 +81,7 @@ async def bridge_ins(
         ins_open_factory = InsOpenFactory()
         ins = ins_open_factory.create(receiver=receiver, routing=routing, data=data)
     elif protocol == "cert":
-        ins = INS_CERT_FACTORY.create(receiver=receiver, routing=routing, data=data)
+        ins = InsCertFactory().create(receiver=receiver, routing=routing, data=data)
     else:
         raise
     ins_res = await execute_send_ins(ins=ins, is_res=wait, timeout=timeout_value)

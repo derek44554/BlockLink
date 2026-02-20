@@ -3,7 +3,7 @@ import base64
 from websockets.legacy.exceptions import InvalidStatusCode
 from blocklink.adapters.ins.node import send_ins_node_info
 from blocklink.models.node.node import NodeModel
-from blocklink.models.node.node_manager import NODE_MANAGER, NodeManager
+from blocklink.models.node.node_manager import NodeManager, NodeManager
 from blocklink.models.signature.signature_manager import SIGNATURE_MANAGER
 from blocklink.utils.connection import connection_node
 from blocklink.utils.discover import get_gateway_mac
@@ -49,7 +49,7 @@ class ConnectModel:
                 encryption_key = bytes.fromhex(self.key_hex)
                 node_model = NodeModel(self.bid, websocket=None, signature_model=signature_model,
                                        encryption_key=encryption_key)
-                NODE_MANAGER.active(node_model=node_model)
+                NodeManager().active(node_model=node_model)
                 print(f"单向注册 {self.bid}")
 
     def save(self):
@@ -65,7 +65,7 @@ class ConnectModel:
         """
         while True:
             # ------------------------- 否 已连接
-            if not NODE_MANAGER.is_active(self.bid, is_connect=True):
+            if not NodeManager().is_active(self.bid, is_connect=True):
                 # 有 内网IP
                 if self.private_address is not None and self.mac == get_gateway_mac():
                     await self.connect_address(self.private_address)
@@ -75,7 +75,7 @@ class ConnectModel:
                     await self.connect_address(self.public_address)
 
             # ------------------------- 否 此BID已经注册
-            if not NODE_MANAGER.is_active(self.bid):
+            if not NodeManager().is_active(self.bid):
                 # 进行注册
                 await self.connect_register()
 
@@ -136,7 +136,7 @@ class ConnectModel:
             # 断开连接
             await websocket.close()
             # 断开节点内的 websocket
-            NODE_MANAGER.disconnect(websocket)
+            NodeManager().disconnect(websocket)
 
     async def connect_register(self):
         """与对方节点注册"""

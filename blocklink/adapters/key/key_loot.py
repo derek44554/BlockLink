@@ -20,6 +20,10 @@ def generate_and_save_rsa_keys(path=""):
     :param path: 保存的路径
     :return:
     """
+    # 确保路径以 / 结尾
+    if path and not path.endswith("/"):
+        path += "/"
+    
     # 生成RSA私钥
     private_key = rsa.generate_private_key(
         public_exponent=65537,

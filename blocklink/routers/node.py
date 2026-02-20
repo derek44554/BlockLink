@@ -2,15 +2,15 @@ import os
 from starlette.websockets import WebSocket
 from blocklink.adapters.ins.node import send_ins_node_info
 from blocklink.models.connect.connect import ConnectModel
-from blocklink.models.connect.connect_manager import CONNECT_MANAGER
+from blocklink.models.connect.connect_manager import ConnectManager
 from blocklink.models.ins.ins_cert import InsCert
 from blocklink.models.ins.ins_open import InsOpen
 from blocklink.models.node.node import NodeModel
-from blocklink.models.node.node_manager import NODE_MANAGER
+from blocklink.models.node.node_manager import NodeManager
 from blocklink.models.routers.route_block import RouteBlock
 from blocklink.models.signature.signature import SignatureModel
 from blocklink.utils.ins_except import InsException
-from blocklink.utils.node_meta import NODE_MEAT
+from blocklink.utils.node_meta import NodeMeta
 from blocklink.utils.cryptography import decrypt_with_private_key_base64, encrypt_with_public_key_base64, \
     decrypt_with_symmetric_key_base64
 from websockets import ClientConnection
@@ -27,7 +27,7 @@ async def node_signature(websocket: WebSocket | ClientConnection, ins_open: InsO
     :param ins_open:
     :return:
     """
-    return NODE_MEAT.signature
+    return NodeMeta().signature
 
 
 @node_route.open("/node")
@@ -38,7 +38,7 @@ async def node_data(websocket: WebSocket | ClientConnection, ins_open: InsOpen):
     :param ins_open:
     :return:
     """
-    return NODE_MEAT.node
+    return NodeMeta().node
 
 
 @node_route.open("/register/start")
@@ -54,9 +54,9 @@ async def node_start(websocket: WebSocket | ClientConnection, ins_open: InsOpen)
     signature_model = SignatureModel(data=signature, **signature)
 
     # 是否 此BID已经注册 并且是存在 websocket
-    if NODE_MANAGER.is_active(signature_model.owner, is_connect=True):
-        # 保险起建 通过NODE_MANAGER进行一次断开连接
-        NODE_MANAGER.disconnect(websocket)
+    if NodeManager().is_active(signature_model.owner, is_connect=True):
+        # 保险起建 通过NodeManager()进行一次断开连接
+        NodeManager().disconnect(websocket)
         await websocket.close()  # 使用正常关闭码
         raise InsException(ins=ins_open, status_code=53)
 
@@ -69,10 +69,10 @@ async def node_start(websocket: WebSocket | ClientConnection, ins_open: InsOpen)
     node_model = NodeModel(bid=signature_model.owner, websocket=websocket, signature_model=signature_model,
                            encryption_key=os.urandom(32))
     # 存放未激活节点
-    NODE_MANAGER.not_active(node_model)
+    NodeManager().not_active(node_model)
 
     # 随机挑战 解密
-    challenge_decryption = decrypt_with_private_key_base64(private_key=NODE_MEAT.node_private_pey,
+    challenge_decryption = decrypt_with_private_key_base64(private_key=NodeMeta().node_private_pey,
                                                            encrypted_base64=challenge_ciphertext)
 
     # 随机挑战值
@@ -99,7 +99,7 @@ async def node_verify(websocket: WebSocket | ClientConnection, ins_open: InsOpen
     ciphertext_data = ins_open.data["v"]
 
     # 未注册节点
-    node_model = NODE_MANAGER.not_active_node[sender]
+    node_model = NodeManager().not_active_node[sender]
 
     # 通过节点的 对称加密 进行解密
     # 是否可以解密出ok
@@ -111,7 +111,7 @@ async def node_verify(websocket: WebSocket | ClientConnection, ins_open: InsOpen
         raise
 
     # 将节点进行注册
-    NODE_MANAGER.active(node_model)
+    NodeManager().active(node_model)
 
     # ----------------------- 保存证书
     save_to_yaml(node_model.signature_model.data, f"./data/signature/{node_model.signature_model.bid}.yml")
@@ -127,7 +127,7 @@ async def node_verify(websocket: WebSocket | ClientConnection, ins_open: InsOpen
     connect_model = ConnectModel(data=connect_data)
     connect_model.save()
     # 将 connect_model 统一管理
-    CONNECT_MANAGER.add(connect_model)
+    ConnectManager().add(connect_model)
 
     # ----------------------- 发送节点信息
     await send_ins_node_info(node_model.bid)
