@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='blocklink',  # PyPI 上的包名
-    version='0.1.0',
+    version='0.1.1',
     packages=find_packages(exclude=['tests', 'tests.*']),
     install_requires=[
         'cryptography>=41.0.0',
