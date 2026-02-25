@@ -11,7 +11,7 @@ from blocklink.utils.tools import yaml_data
 
 class NodeMeta(metaclass=SingletonMeta):
     def __init__(self):
-        self.node = yaml_data("config/node.yml")  # 节点信息
+        self.node = yaml_data("node.yml")  # 节点信息
         self.top_verify_public_pey = load_public_key(path=os.getenv("TOP_VERIFY_PUBLIC_PEY_PATH"))  # 顶级验证公钥
         self.node_private_pey = load_private_key(path=os.getenv("NODE_PRIVATE_PEY_PATH"))  # 节点私钥
         self.signature = yaml_data(os.getenv("SIGNATURE_PATH"))  # 签名
