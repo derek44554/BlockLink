@@ -1,14 +1,12 @@
 from blocklink.models.routers.route_block_app import RouteApp
+from blocklink.routers.connect import connect_route
 from blocklink.strategy.strategy import Strategy
 from blocklink.strategy.strategy_manager import StrategyManager
-
-from blocklink.models.routers.route_block_manage import RouteBlockManage, ROUTE_BLOCK_MANAGE
+from blocklink.models.routers.route_block_manage import RouteBlockManage
 from fastapi import FastAPI
-
 from blocklink.utils.singleton_meta import SingletonMeta
 from blocklink.routers.node_api import node_api
 from blocklink.routers.bridge import bridge_api
-from blocklink.routers.connect import connect_api
 from blocklink.routers.ws import ws_app
 from blocklink.routers.node import node_route
 from blocklink.routers.res import res_route
@@ -36,6 +34,7 @@ class BlackAPI(metaclass=SingletonMeta):
         # 注册基础 Block 路由
         self.route_block_manage.add(node_route)
         self.route_block_manage.add(res_route)
+        self.route_block_manage.add(connect_route)
 
 
         self.fast_api.router.lifespan_context = self.strategy_manager.lifespan
@@ -77,5 +76,3 @@ class BlackAPI(metaclass=SingletonMeta):
                 self.fast_api.include_router(node_api, prefix="/node", tags=['Base'])
             if name == "bridge":
                 self.fast_api.include_router(bridge_api, prefix="/bridge", tags=['Base'])
-            if name == "connect":
-                self.fast_api.include_router(connect_api, prefix="/connect", tags=['Base'])

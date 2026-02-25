@@ -1,31 +1,19 @@
 from blocklink.utils.ins_except import InsCertException
-
 from blocklink.models.ins.ins_cert import InsCert
-
 from blocklink.models.node.node import NodeModel
-
 from blocklink.models.signature.signature import SignatureModel
-from fastapi import APIRouter, HTTPException, Body
 import asyncio
-import websockets
-from websockets.legacy.exceptions import InvalidStatusCode
-import socket
 import requests
-
 from blocklink.models.connect.connect_manager import ConnectManager
 from blocklink.models.connect.connect import ConnectModel
 from blocklink.models.node.node_manager import NodeManager
 from blocklink.models.routers.route_block import RouteBlock
 from blocklink.utils.node_meta import NodeMeta
-from blocklink.utils.connection import connection_node
-from blocklink.utils.node_message import node_message
-from blocklink.adapters.ins.node import send_ins_node_info
 
-node_route = RouteBlock(route="/node")
-connect_api = APIRouter()
+connect_route = RouteBlock(route="/connect")
 
 
-@node_route.cert("/status")
+@connect_route.cert("/status")
 async def get_connect_status(node_model: NodeModel, ins_cert: InsCert):
     """
     获取所有连接节点的状态信息
@@ -91,7 +79,7 @@ async def get_connect_status(node_model: NodeModel, ins_cert: InsCert):
     }
 
 
-@node_route.cert("/add")
+@connect_route.cert("/add")
 async def add_connect_by_ip(node_model: NodeModel, ins_cert: InsCert):
     """
     通过 IP 地址连接节点
