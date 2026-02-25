@@ -1,8 +1,18 @@
 from setuptools import setup, find_packages
+import os
+
+# 从 __init__.py 读取版本号
+def get_version():
+    init_path = os.path.join(os.path.dirname(__file__), 'blocklink', '__init__.py')
+    with open(init_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            if line.startswith('__version__'):
+                return line.split('=')[1].strip().strip("'\"")
+    raise RuntimeError('Unable to find version string.')
 
 setup(
     name='blocklink',  # PyPI 上的包名
-    version='0.1.1',
+    version=get_version(),
     packages=find_packages(exclude=['tests', 'tests.*']),
     install_requires=[
         'cryptography>=41.0.0',

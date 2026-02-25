@@ -1,5 +1,5 @@
 import json
-from fastapi import Response
+from fastapi import Response, HTTPException
 from fastapi import APIRouter
 
 from blocklink.utils.cryptography import datetime_converter

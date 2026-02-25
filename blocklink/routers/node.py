@@ -144,3 +144,4 @@ async def res_info(node_model: NodeModel, ins_cert: InsCert):
     if not isinstance(ins_cert.data, dict):
         raise
     node_model.info = ins_cert.data
+

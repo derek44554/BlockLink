@@ -8,6 +8,7 @@ from fastapi import FastAPI
 from blocklink.utils.singleton_meta import SingletonMeta
 from blocklink.routers.node_api import node_api
 from blocklink.routers.bridge import bridge_api
+from blocklink.routers.connect import connect_api
 from blocklink.routers.ws import ws_app
 from blocklink.routers.node import node_route
 from blocklink.routers.res import res_route
@@ -76,3 +77,5 @@ class BlackAPI(metaclass=SingletonMeta):
                 self.fast_api.include_router(node_api, prefix="/node", tags=['Base'])
             if name == "bridge":
                 self.fast_api.include_router(bridge_api, prefix="/bridge", tags=['Base'])
+            if name == "connect":
+                self.fast_api.include_router(connect_api, prefix="/connect", tags=['Base'])
