@@ -58,7 +58,6 @@ async def get_connect_status(node_model: NodeModel, ins_cert: InsCert):
             connected_count += 1
         else:
             registered_count += 1
-
         node_info = {
             "bid": bid,
             "bid_short": bid[:10],
@@ -67,9 +66,13 @@ async def get_connect_status(node_model: NodeModel, ins_cert: InsCert):
             "public_address": connect_model.public_address if connect_model else None,
             "private_address": connect_model.private_address if connect_model else None,
             "mac": connect_model.mac if connect_model else None,
+            "node_data": node_model.info,
+            "signature_data": node_model.signature_model.data,
         }
 
         nodes_status.append(node_info)
+
+    print(nodes_status)
 
     return {
         "total": len(nodes_status),
@@ -103,7 +106,7 @@ async def add_connect_by_ip(node_model: NodeModel, ins_cert: InsCert):
             raise InsCertException(node=node_model, ins_cert=ins_cert, status_code=32, content="连接失败")
 
         # 是否已经是连接状态
-        if not ConnectManager()[signature_model.owner]:
+        if ConnectManager()[signature_model.owner]:
             raise InsCertException(node=node_model, ins_cert=ins_cert, status_code=32, content="连接失败")
 
         data = {
@@ -113,8 +116,9 @@ async def add_connect_by_ip(node_model: NodeModel, ins_cert: InsCert):
 
         connect_model = ConnectModel(data=data)
         connect_model.save()
-        # 建立连接
-        await ConnectManager().add_connect(connect_model=connect_model)
+
+        # 在后台异步建立连接，不阻塞响应
+        asyncio.create_task(ConnectManager().add_connect(connect_model=connect_model))
 
         return {}
     except:
