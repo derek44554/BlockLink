@@ -150,7 +150,7 @@ def generate_node(
     # ----------------------
     signature_data = {
         "bid": generate_bid(),  # 生成唯一的签名ID
-        "model": "signature",  # 数据模型类型
+        "model": "6c11d51518ef5daca61d9689660328e5",  # 数据模型类型
         "signature": "",  # 签名数据（稍后填充）
         "owner": node_data["bid"],  # 签名所属的节点ID
         "permission_level": permission_level,  # 权限等级
