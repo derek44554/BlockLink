@@ -142,7 +142,7 @@ def generate_node(
     # ----------------------
     node_data = {
         "bid": generate_bid(),  # 生成唯一的节点ID
-        "model": "node",  # 数据模型类型
+        "model": "86e12c3c8fcd58f28a3a581f4df52578",  # 数据模型类型
     }
 
     # ----------------------
