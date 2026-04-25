@@ -10,7 +10,7 @@ from blocklink.routers.bridge import bridge_api
 from blocklink.routers.ws import ws_app
 from blocklink.routers.node import node_route
 from blocklink.routers.res import res_route
-
+from blocklink.utils.app_loader import load_apps
 
 class BlackAPI(metaclass=SingletonMeta):
     """

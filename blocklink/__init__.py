@@ -2,7 +2,7 @@
 blocklink - A distributed node network framework
 """
 
-__version__ = '0.1.3'
+__version__ = '0.1.4'
 __author__ = 'Derek X'
 __email__ = 'me@derekx.com'
 
