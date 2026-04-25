@@ -36,8 +36,11 @@ def upload_file_ipfs(file_path: str, address: str) -> str:
         raise FileNotFoundError(f"文件不存在: {file_path}")
 
     with path.open("rb") as fh:
+        ipfs_password = os.getenv("IPFS_PASSWORD")
+        if not ipfs_password:
+            raise ValueError("IPFS_PASSWORD environment variable is not set")
         files = {"file": (path.name, fh)}
-        data = {"password": "dirrk2938884jMMFhs01"}
+        data = {"password": ipfs_password}
         response = requests.post(f"{address}/ipfs/ipfs/upload", data=data, files=files)
         response.raise_for_status()
         return response.json()["cid"]
