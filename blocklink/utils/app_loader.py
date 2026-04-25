@@ -1,3 +1,5 @@
+import os
+import sys
 from importlib import import_module
 from pathlib import Path
 from types import ModuleType
@@ -6,7 +8,8 @@ import yaml
 from blocklink.models.routers.route_block_app import RouteApp
 
 
-APPS_DIR = Path(__file__).resolve().parent / "apps"
+APPS_DIR_ENV = "BLOCKLINK_APPS_DIR"
+APPS_DIR = Path.cwd() / "apps"
 MODULE_FILE_NAME = "module.yml"
 
 
@@ -53,10 +56,27 @@ def read_module_config(module_dir: Path) -> dict:
     return config
 
 
-def iter_enabled_module_dirs(apps_dir: Path = APPS_DIR) -> list[Path]:
+def resolve_apps_dir(apps_dir: str | Path | None = None) -> Path:
+    if apps_dir is None:
+        apps_dir = os.environ.get(APPS_DIR_ENV)
+
+    if apps_dir is None:
+        return Path.cwd() / "apps"
+
+    return Path(apps_dir).expanduser()
+
+
+def iter_enabled_module_dirs(apps_dir: str | Path | None = None) -> list[Path]:
+    apps_path = resolve_apps_dir(apps_dir)
     module_dirs: list[Path] = []
 
-    for module_dir in sorted(apps_dir.iterdir(), key=lambda path: path.name):
+    if not apps_path.exists():
+        return module_dirs
+
+    if not apps_path.is_dir():
+        raise RuntimeError(f"{apps_path} must be a directory.")
+
+    for module_dir in sorted(apps_path.iterdir(), key=lambda path: path.name):
         if not module_dir.is_dir():
             continue
 
@@ -72,12 +92,18 @@ def iter_enabled_module_dirs(apps_dir: Path = APPS_DIR) -> list[Path]:
     return module_dirs
 
 
-def load_apps(apps_dir: Path = APPS_DIR) -> list[RouteApp]:
+def load_apps(apps_dir: str | Path | None = None) -> list[RouteApp]:
+    apps_path = resolve_apps_dir(apps_dir)
+    import_root = str(apps_path.parent.resolve())
+
+    if import_root not in sys.path:
+        sys.path.insert(0, import_root)
+
     route_apps: list[RouteApp] = []
 
-    for module_dir in iter_enabled_module_dirs(apps_dir):
+    for module_dir in iter_enabled_module_dirs(apps_path):
         app_name = module_dir.name
-        module = import_module(f"apps.{app_name}")
+        module = import_module(f"{apps_path.name}.{app_name}")
         route_apps.append(find_route_app(module, app_name))
 
     return route_apps

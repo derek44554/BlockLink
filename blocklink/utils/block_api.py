@@ -1,35 +1,39 @@
+from pathlib import Path
+
+from fastapi import FastAPI
+
 from blocklink.models.routers.route_block_app import RouteApp
+from blocklink.models.routers.route_block_manage import RouteBlockManage
+from blocklink.routers.bridge import bridge_api
 from blocklink.routers.connect import connect_route
+from blocklink.routers.node import node_route
+from blocklink.routers.node_api import node_api
+from blocklink.routers.res import res_route
+from blocklink.routers.ws import ws_app
 from blocklink.strategy.strategy import Strategy
 from blocklink.strategy.strategy_manager import StrategyManager
-from blocklink.models.routers.route_block_manage import RouteBlockManage
-from fastapi import FastAPI
-from blocklink.utils.singleton_meta import SingletonMeta
-from blocklink.routers.node_api import node_api
-from blocklink.routers.bridge import bridge_api
-from blocklink.routers.ws import ws_app
-from blocklink.routers.node import node_route
-from blocklink.routers.res import res_route
 from blocklink.utils.app_loader import load_apps
+from blocklink.utils.singleton_meta import SingletonMeta
+
 
 class BlackAPI(metaclass=SingletonMeta):
     """
     BlackAPI 单例类，负责初始化和管理 FastAPI 应用及其路由、策略等。
     """
 
-    def __init__(self, fast_api: FastAPI):
+    def __init__(self, fast_api: FastAPI, apps_dir: str | Path | None = None):
         """
         初始化 BlackAPI 实例，创建路由管理器和策略管理器。
         """
-        # 注册 App
-        for route_app in load_apps():
-            block_api.add_app(route_app)
-
-        self.fast_api: FastAPI  = fast_api
+        self.fast_api: FastAPI = fast_api
         self.route_block_manage = RouteBlockManage()
         self.strategy_manager = StrategyManager()
         self.open_apis: list[str] = []
         self.apps: list[RouteApp] = []
+
+        # 注册宿主项目 apps 目录中启用的 App
+        for route_app in load_apps(apps_dir):
+            self.add_app(route_app)
 
     def init(self):
         """
@@ -39,7 +43,6 @@ class BlackAPI(metaclass=SingletonMeta):
         self.route_block_manage.add(node_route)
         self.route_block_manage.add(res_route)
         self.route_block_manage.add(connect_route)
-
 
         self.fast_api.router.lifespan_context = self.strategy_manager.lifespan
         self.fast_api.lifespan_context = self.strategy_manager.lifespan
