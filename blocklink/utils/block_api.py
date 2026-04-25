@@ -21,6 +21,10 @@ class BlackAPI(metaclass=SingletonMeta):
         """
         初始化 BlackAPI 实例，创建路由管理器和策略管理器。
         """
+        # 注册 App
+        for route_app in load_apps():
+            block_api.add_app(route_app)
+
         self.fast_api: FastAPI  = fast_api
         self.route_block_manage = RouteBlockManage()
         self.strategy_manager = StrategyManager()
