@@ -114,7 +114,9 @@ async def node_verify(websocket: WebSocket | ClientConnection, ins_open: InsOpen
     NodeManager().active(node_model)
 
     # ----------------------- 保存证书
-    save_to_yaml(node_model.signature_model.data, f"./data/signature/{node_model.signature_model.bid}.yml")
+    # 🛡️ Sentinel: Sanitize bid to prevent path traversal
+    safe_bid = os.path.basename(node_model.signature_model.bid)
+    save_to_yaml(node_model.signature_model.data, f"./data/signature/{safe_bid}.yml")
 
     # ----------------------- 保存连接信息
     connect_data = {
