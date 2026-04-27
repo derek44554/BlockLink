@@ -1,5 +1,6 @@
 import asyncio
 import base64
+import os
 from websockets.legacy.exceptions import InvalidStatusCode
 from blocklink.adapters.ins.node import send_ins_node_info
 from blocklink.models.node.node import NodeModel
@@ -54,7 +55,9 @@ class ConnectModel:
 
     def save(self):
         """保存信息"""
-        save_to_yaml(self.data, f"data/connect/{self.bid}.yml")
+        # 使用 os.path.basename 过滤 bid，防止路径穿越攻击
+        safe_bid = os.path.basename(self.bid)
+        save_to_yaml(self.data, f"data/connect/{safe_bid}.yml")
 
     async def connect(self):
         """
