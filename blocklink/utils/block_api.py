@@ -21,7 +21,7 @@ class BlackAPI(metaclass=SingletonMeta):
     BlackAPI 单例类，负责初始化和管理 FastAPI 应用及其路由、策略等。
     """
 
-    def __init__(self, fast_api: FastAPI, apps_dir: str | Path | None = None):
+    def __init__(self, fast_api: FastAPI):
         """
         初始化 BlackAPI 实例，创建路由管理器和策略管理器。
         """
@@ -30,10 +30,6 @@ class BlackAPI(metaclass=SingletonMeta):
         self.strategy_manager = StrategyManager()
         self.open_apis: list[str] = []
         self.apps: list[RouteApp] = []
-
-        # 注册宿主项目 apps 目录中启用的 App
-        for route_app in load_apps(apps_dir):
-            self.add_app(route_app)
 
     def init(self):
         """
