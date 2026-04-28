@@ -12,7 +12,6 @@ from blocklink.routers.res import res_route
 from blocklink.routers.ws import ws_app
 from blocklink.strategy.strategy import Strategy
 from blocklink.strategy.strategy_manager import StrategyManager
-from blocklink.utils.app_loader import load_apps
 from blocklink.utils.singleton_meta import SingletonMeta
 
 
