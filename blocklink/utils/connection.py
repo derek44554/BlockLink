@@ -81,6 +81,8 @@ async def connection_node(websocket):
     node_manager.active_node.update({signature_model.owner: node_model})
 
     # ----------------------- 保存证书
-    save_to_yaml(node_model.signature_model.data, f"./data/signature/{node_model.signature_model.bid}.yml")
+    # 使用 os.path.basename 过滤 bid，防止路径穿越攻击
+    safe_bid = os.path.basename(node_model.signature_model.bid)
+    save_to_yaml(node_model.signature_model.data, f"./data/signature/{safe_bid}.yml")
 
     return node_model
